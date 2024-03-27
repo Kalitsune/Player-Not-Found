@@ -1,0 +1,8 @@
+name: PlayerNotFound
+version: '${project.version}'
+main: net.kalitsune.playernotfound.PlayerNotFound
+api-version: '1.16'
+authors: [ Kalitsune ]
+description: A minigame plugin with a hunted, clones and hunters
+website: https://kalitsune.net
+depend: [ CommandAPI, Citizens ]

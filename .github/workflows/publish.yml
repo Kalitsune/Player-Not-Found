@@ -1,0 +1,32 @@
+name: CI for releases
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Get Tag version
+        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+      - uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'adopt'
+      - name: Prepare the files for export
+        run: |
+          mkdir out
+      - name: Build with Maven using the custom profile ci-export
+        run: mvn -B -DskipTests -Pci-export clean package
+      - name: Upload build artifacts
+        uses: "marvinpinto/action-automatic-releases@latest"
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          automatic_release_tag: "latest"
+          prerelease: true
+          title: "${{ env.RELEASE_VERSION }}"
+          files: |
+            out/*.jar
