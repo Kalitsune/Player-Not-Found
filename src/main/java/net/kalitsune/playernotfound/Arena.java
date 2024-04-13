@@ -330,9 +330,9 @@ public class Arena {
     }
 
     public boolean isInside(Location loc) {
-        return loc.getX() >= from.getX() && loc.getX() <= to.getX() &&
-                loc.getY() >= from.getY() && loc.getY() <= to.getY() &&
-                loc.getZ() >= from.getZ() && loc.getZ() <= to.getZ();
+        return ((loc.getX() >= from.getX() && loc.getX() <= to.getX()) || (loc.getX() <= from.getX() && loc.getX() >= to.getX())) &&
+                ((loc.getY() >= from.getY() && loc.getY() <= to.getY()) || (loc.getY() <= from.getY() && loc.getY() >= to.getY())) &&
+                ((loc.getZ() >= from.getZ() && loc.getZ() <= to.getZ()) || (loc.getZ() <= from.getZ() && loc.getZ() >= to.getZ()));
     }
 
     public void reset() {
@@ -340,18 +340,29 @@ public class Arena {
         if (getHiders() != null) {
             for (Player player : getHiders()) {
                 // remove the hider club from the player
-                player.getInventory().remove(Items.hiderClub);
+                player.getInventory().remove(Items.hiderClub.getType());
                 // tp them back
                 player.teleport(getWaypoint());
+                // send them a message
+                player.sendMessage(ChatColor.RED + "The game has ended, you have been teleported back to arena waypoint.");
             }
         }
 
         if (getSeekers() != null) {
             for (Player player : getSeekers()) {
                 // remove the seeker club from the player
-                player.getInventory().remove(Items.seekerClub);
+                player.getInventory().remove(Items.seekerClub.getType());
                 // tp them back
                 player.teleport(getWaypoint());
+                // send them a message
+                player.sendMessage(ChatColor.RED + "The game has ended, you have been teleported back to arena waypoint.");
+            }
+        }
+
+        if (getDeadPlayers() != null) {
+            for (Player player : getDeadPlayers()) {
+                // send them a message
+                player.sendMessage(ChatColor.RED + "The game has ended.");
             }
         }
 
@@ -404,6 +415,9 @@ public class Arena {
         int i = 0;
         for (Player player : players) {
             for (Location loc : spawns) {
+                if (loc == null) {
+                    continue;
+                }
                 // spawn the npc
                 NPC npc = CitizensAPI.getNPCRegistry().createNPC(EntityType.PLAYER, player.getName());
                 npc.getOrAddTrait(Waypoints.class).setWaypointProvider("wander");

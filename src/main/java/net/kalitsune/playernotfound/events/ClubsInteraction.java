@@ -49,6 +49,7 @@ public class ClubsInteraction implements Listener {
         Entity entity = getNearestEntityInSight(player, 5);
         if (event.getAction() == Action.RIGHT_CLICK_AIR && entity instanceof Player) {
             Player target = (Player) entity;
+            player.sendMessage("You are looking at " + target.getName());
 
             if (target.getName().equals(player.getName())) {
                 return;
@@ -60,6 +61,12 @@ public class ClubsInteraction implements Listener {
             if (item.getType() == Items.hiderClub.getType() && item.getItemMeta().getDisplayName().equals(Items.hiderClub.getItemMeta().getDisplayName())) {
                 // get the current arena
                 Arena arena = Stores.arenas.getArena(player);
+
+                if (arena != null && !arena.isHider(player)) {
+                    player.sendMessage(ChatColor.RED + "Hum... You shouldn't have that...");
+                    item.setAmount(0);
+                    return;
+                }
 
                 // check if the target is a seeker
                 if (arena != null && arena.isSeeker(target)) {
@@ -81,6 +88,12 @@ public class ClubsInteraction implements Listener {
             if (item.getType() == Items.seekerClub.getType() && item.getItemMeta().getDisplayName().equals(Items.seekerClub.getItemMeta().getDisplayName())) {
                 // get the current arena
                 Arena arena = Stores.arenas.getArena(player);
+
+                if (arena != null && !arena.isSeeker(player)) {
+                    player.sendMessage(ChatColor.RED + "Hum... You shouldn't have that...");
+                    item.setAmount(0);
+                    return;
+                }
 
                 // check if the target is a hider
                 if (arena != null && arena.isHider(target)) {
@@ -109,6 +122,12 @@ public class ClubsInteraction implements Listener {
         //check if the player is holding the seeker club
         if (item.getType() == Items.seekerClub.getType() && item.getItemMeta().getDisplayName().equals(Items.seekerClub.getItemMeta().getDisplayName())) {
             Arena arena = Stores.arenas.getArena(player);
+            // ensure that the player is a seeker
+            if (arena != null && !arena.isSeeker(player)) {
+                player.sendMessage(ChatColor.RED + "Hum... You shouldn't have that...");
+                item.setAmount(0);
+                return;
+            }
 
             // check if the NPC is part of the game
             if (arena == null || !arena.isNPC(target)) {
