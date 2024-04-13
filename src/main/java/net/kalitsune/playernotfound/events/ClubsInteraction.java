@@ -49,7 +49,6 @@ public class ClubsInteraction implements Listener {
         Entity entity = getNearestEntityInSight(player, 5);
         if (event.getAction() == Action.RIGHT_CLICK_AIR && entity instanceof Player) {
             Player target = (Player) entity;
-            player.sendMessage("You are looking at " + target.getName());
 
             if (target.getName().equals(player.getName())) {
                 return;
@@ -74,8 +73,13 @@ public class ClubsInteraction implements Listener {
                     target.getWorld().spawnParticle(Particle.CAMPFIRE_SIGNAL_SMOKE, target.getLocation().add(0, 1.5, 0), 10);
                     target.getWorld().playSound(target.getLocation(), "block.conduit.activate", 1, 1);
 
-                    // blind the seeker for 5 seconds
-                    target.addPotionEffect(PotionEffectType.BLINDNESS.createEffect(100, 1));
+                    // affect the seeker for 5 seconds
+                    target.addPotionEffect(PotionEffectType.BLINDNESS.createEffect(200, 255));
+                    target.addPotionEffect(PotionEffectType.SLOW.createEffect(100, 255));
+                    target.addPotionEffect(PotionEffectType.CONFUSION.createEffect(100, 255));
+
+                    // Add a stunned title to the target
+                    target.sendTitle(ChatColor.RED + "Stunned!", ChatColor.GRAY + "You can't move for 5 seconds", 0, 100, 20);
 
                     // remove one hider club from the player
                     item.setAmount(item.getAmount() - 1);
@@ -86,6 +90,11 @@ public class ClubsInteraction implements Listener {
 
             //check if the player is holding the seeker club
             if (item.getType() == Items.seekerClub.getType() && item.getItemMeta().getDisplayName().equals(Items.seekerClub.getItemMeta().getDisplayName())) {
+                // check if the player is stunned
+                if (player.hasPotionEffect(PotionEffectType.SLOW)) {
+                    return;
+                }
+
                 // get the current arena
                 Arena arena = Stores.arenas.getArena(player);
 
@@ -121,6 +130,12 @@ public class ClubsInteraction implements Listener {
 
         //check if the player is holding the seeker club
         if (item.getType() == Items.seekerClub.getType() && item.getItemMeta().getDisplayName().equals(Items.seekerClub.getItemMeta().getDisplayName())) {
+
+            // check if the player is stunned
+            if (player.hasPotionEffect(PotionEffectType.SLOW)) {
+                return;
+            }
+
             Arena arena = Stores.arenas.getArena(player);
             // ensure that the player is a seeker
             if (arena != null && !arena.isSeeker(player)) {
