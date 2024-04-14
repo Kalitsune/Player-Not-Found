@@ -9,6 +9,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffectType;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -120,6 +121,10 @@ public class Arena {
 
         // give the player the hider club
         player.getInventory().addItem(Items.hiderClub);
+
+        // remove any potion effect that the player could have
+        player.getActivePotionEffects().forEach(potionEffect -> player.removePotionEffect(potionEffect.getType()));
+        player.addPotionEffect(PotionEffectType.SATURATION.createEffect(1000000, 1));
     }
 
     public void removeHider(Player player) {
@@ -138,6 +143,9 @@ public class Arena {
 
             // remove the hider club from the player
             player.getInventory().remove(Items.hiderClub);
+
+            // remove the saturation potion effect from the player
+            player.removePotionEffect(PotionEffectType.SATURATION);
 
             // check if there are no more seekers
             if (this.hiders == null || this.hiders.length == 0) {
@@ -194,6 +202,9 @@ public class Arena {
         ItemStack seekerClub = Items.seekerClub.clone();
         seekerClub.setAmount(3);
         player.getInventory().addItem(seekerClub);
+
+        // add a speed potion effect to the player
+        player.addPotionEffect(PotionEffectType.SPEED.createEffect(1000000, 2));
     }
 
     public void removeSeeker(Player player) {
@@ -212,6 +223,9 @@ public class Arena {
 
             // remove the seeker club from the player
             player.getInventory().remove(Items.seekerClub);
+
+            // remove the speed potion effect from the player
+            player.removePotionEffect(PotionEffectType.SPEED);
 
             // check if there are no more seekers
             if (this.seekers == null || this.seekers.length == 0) {
@@ -341,6 +355,10 @@ public class Arena {
             for (Player player : getHiders()) {
                 // remove the hider club from the player
                 player.getInventory().remove(Items.hiderClub.getType());
+
+                // remove the saturation potion effect from the player
+                player.removePotionEffect(PotionEffectType.SATURATION);
+
                 // tp them back
                 player.teleport(getWaypoint());
                 // send them a message
@@ -352,6 +370,10 @@ public class Arena {
             for (Player player : getSeekers()) {
                 // remove the seeker club from the player
                 player.getInventory().remove(Items.seekerClub.getType());
+
+                // remove the speed potion effect from the player
+                player.removePotionEffect(PotionEffectType.SPEED);
+
                 // tp them back
                 player.teleport(getWaypoint());
                 // send them a message
@@ -420,7 +442,7 @@ public class Arena {
                     Bukkit.getLogger().info("WARNING: NPC Location is null! This NPC has been skipped. ");
                     continue;
                 }
-                
+
                 // spawn the npc
                 NPC npc = CitizensAPI.getNPCRegistry().createNPC(EntityType.PLAYER, player.getName());
                 npc.getOrAddTrait(Waypoints.class).setWaypointProvider("wander");
