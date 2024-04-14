@@ -416,8 +416,11 @@ public class Arena {
         for (Player player : players) {
             for (Location loc : spawns) {
                 if (loc == null) {
+                    //log the locations in the console
+                    Bukkit.getLogger().info("WARNING: NPC Location is null! This NPC has been skipped. ");
                     continue;
                 }
+                
                 // spawn the npc
                 NPC npc = CitizensAPI.getNPCRegistry().createNPC(EntityType.PLAYER, player.getName());
                 npc.getOrAddTrait(Waypoints.class).setWaypointProvider("wander");

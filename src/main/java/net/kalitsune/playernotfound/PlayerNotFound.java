@@ -42,7 +42,7 @@ public final class PlayerNotFound extends JavaPlugin {
                 if (arenaSection != null) {
                     // get the values
                     List<Map<?, ?>> cfgSpawns = arenaSection.getMapList("spawns");
-
+                    
                     ConfigurationSection cfgFrom = arenaSection.getConfigurationSection("area.from");
                     ConfigurationSection cfgTo = arenaSection.getConfigurationSection("area.to");
                     ConfigurationSection cfgWaypoint = arenaSection.getConfigurationSection("area.waypoint");
@@ -50,6 +50,7 @@ public final class PlayerNotFound extends JavaPlugin {
 
                     // convert cfgSpawns to Location
                     Location[] spawns = new Location[cfgSpawns.size()];
+                    int i = 0;
                     for (Map<?, ?> spawn : cfgSpawns) {
                         double x = Double.parseDouble(spawn.get("x").toString());
                         double y = Double.parseDouble(spawn.get("y").toString());
@@ -57,7 +58,8 @@ public final class PlayerNotFound extends JavaPlugin {
                         float yaw = spawn.containsKey("yaw") ? (float) spawn.get("yaw") : 0;
                         float pitch = spawn.containsKey("pitch") ? (float) spawn.get("pitch") : 0;
 
-                        spawns[cfgSpawns.indexOf(spawn)] = new Location(getServer().getWorld(cfgWorld), x, y, z, yaw, pitch);
+                        spawns[i] = new Location(getServer().getWorld(cfgWorld), x, y, z, yaw, pitch);
+                        i++;
                     }
 
                     // convert cfgFrom, cfgTo and cfgWaypoint to Location
