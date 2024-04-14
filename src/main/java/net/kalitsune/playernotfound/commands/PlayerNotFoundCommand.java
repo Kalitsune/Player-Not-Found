@@ -4,7 +4,7 @@ import dev.jorel.commandapi.annotations.Command;
 import dev.jorel.commandapi.annotations.Default;
 import dev.jorel.commandapi.annotations.NeedsOp;
 import dev.jorel.commandapi.annotations.Subcommand;
-import dev.jorel.commandapi.annotations.arguments.AMultiLiteralArgument;
+import dev.jorel.commandapi.annotations.arguments.AIntegerArgument;
 import dev.jorel.commandapi.annotations.arguments.AStringArgument;
 import net.kalitsune.playernotfound.Arena;
 import org.bukkit.ChatColor;
@@ -24,19 +24,17 @@ public class PlayerNotFoundCommand {
 
     }
 
-    @Default
-    public static void playernotfound(Player sender, @AStringArgument String arenaName, @AMultiLiteralArgument({"play", "reset"}) String action) {
-        switch (action) {
-            case "play":
-                play(sender, arenaName);
-                break;
-            case "reset":
-                reset(sender, arenaName);
-                break;
-        }
+    @Subcommand("play")
+    public static void play(Player sender, @AStringArgument String arenaName) {
+        play_game(sender, arenaName, null);
     }
 
-    public static void play(Player sender, String arenaName) {
+    @Subcommand("play")
+    public static void play(Player sender, @AStringArgument String arenaName, @AIntegerArgument Integer duration) {
+        play_game(sender, arenaName, duration);
+    }
+
+    public static void play_game(Player sender, String arenaName, Integer duration) {
         Arena arena = arenas.getArena(arenaName);
         if (arena == null) {
             sender.sendMessage(ChatColor.RED + "Arena " + arenaName + " not found");
@@ -66,7 +64,7 @@ public class PlayerNotFoundCommand {
         sender.sendMessage(message.toString());
 
         // enable the arena
-        arena.resetCountdown();
+        arena.resetCountdown(duration);
         arena.spawnNPCs(players);
         arena.setActive(true);
 
@@ -74,6 +72,7 @@ public class PlayerNotFoundCommand {
         arena.startLoop();
     }
 
+    @Subcommand("reset")
     public static void reset(Player sender, @AStringArgument String arenaName) {
         Arena arena = arenas.getArena(arenaName);
         if (arena == null) {

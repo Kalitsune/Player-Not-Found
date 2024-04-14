@@ -92,6 +92,8 @@ public class Arena {
                 for (Player seeker : this.seekers) {
                     addDeadPlayer(seeker);
                 }
+            } else {
+                reset();
             }
         }
     }
