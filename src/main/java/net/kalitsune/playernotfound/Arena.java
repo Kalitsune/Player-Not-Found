@@ -71,13 +71,13 @@ public class Arena {
         return this.countdown;
     }
 
-    public void resetCountdown() {
-        this.duration = this.default_duration;
-        this.countdown = this.duration;
-    }
 
     public void resetCountdown(Integer durationOverride) {
-        this.duration = durationOverride;
+        if (durationOverride == null) {
+            this.duration = this.default_duration;
+        } else {
+            this.duration = durationOverride;
+        }
         this.countdown = this.duration;
     }
 
@@ -108,6 +108,9 @@ public class Arena {
             @Override
             public void run() {
                 if (isActive()) {
+                    tickCountdown();
+
+                    // show the countdown to the players in the action bar as well as the amount of players remaining
                     if (getCountdown() <= 0) {
                         // show the countdown to the players in the action bar as well as the amount of players remaining
                         if (getHiders() != null) {
@@ -130,9 +133,7 @@ public class Arena {
                             }
                         }
                     }
-                    tickCountdown();
 
-                    // show the countdown to the players in the action bar as well as the amount of players remaining
                     if (getHiders() != null) {
                         for (Player hider : getHiders()) {
                             hider.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(
@@ -253,7 +254,7 @@ public class Arena {
             this.hiders = newHiders;
 
             // remove the hider club from the player
-            player.getInventory().remove(Items.hiderClub);
+            player.getInventory().remove(Items.hiderClub.getType());
 
             // remove the saturation potion effect from the player
             player.removePotionEffect(PotionEffectType.SATURATION);
@@ -337,7 +338,7 @@ public class Arena {
             this.seekers = newSeekers;
 
             // remove the seeker club from the player
-            player.getInventory().remove(Items.seekerClub);
+            player.getInventory().remove(Items.seekerClub.getType());
 
             // remove the speed potion effect from the player
             player.removePotionEffect(PotionEffectType.SPEED);
