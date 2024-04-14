@@ -33,16 +33,17 @@ public class DetectPlayerEnteringArena implements Listener {
             }
 
             //ensure that the player is not already playing in another arena
-            if (arenas.getArena(player) != null) {
+            Arena player_arena = arenas.getArena(player);
+            if (player_arena != null) {
                 // check if the arena is the same as the current one
-                if (arenas.getArena(player).getName().equals(arena.getName())) {
+                if (player_arena.getName().equals(arena.getName())) {
                     return;
                 }
 
                 // check if the player is dead
-                if (arenas.getArena(player).isDead(player)) {
+                if (player_arena.isDead(player)) {
                     // Remove the player from the dead list
-                    arenas.getArena(player).removeDeadPlayer(player);
+                    player_arena.removeDeadPlayer(player);
                     // make the player join the seekers
                     arena.addSeeker(player);
                 }
@@ -53,9 +54,15 @@ public class DetectPlayerEnteringArena implements Listener {
         } else {
             // the player is not in an arena
             // check if the player is playing in an arena
-            if (arenas.getArena(player) != null) {
+            Arena player_arena = arenas.getArena(player);
+            if (player_arena != null) {
+                // check if the player is dead
+                if (player_arena.isDead(player)) {
+                    return;
+                }
+
                 // remove the player from the arena
-                arenas.getArena(player).addDeadPlayer(player);
+                player_arena.addDeadPlayer(player);
                 // send a message
                 player.sendMessage(ChatColor.RED + "Leaving the arena during a game is prohibited. You are now dead.");
             }
