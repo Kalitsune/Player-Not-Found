@@ -50,6 +50,15 @@ public class DetectPlayerEnteringArena implements Listener {
                 // make the player join the seekers
                 arena.addSeeker(player);
             }
+        } else {
+            // the player is not in an arena
+            // check if the player is playing in an arena
+            if (arenas.getArena(player) != null) {
+                // remove the player from the arena
+                arenas.getArena(player).addDeadPlayer(player);
+                // send a message
+                player.sendMessage(ChatColor.RED + "Leaving the arena during a game is prohibited. You are now dead.");
+            }
         }
     }
 }
