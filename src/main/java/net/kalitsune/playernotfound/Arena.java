@@ -97,39 +97,53 @@ public class Arena {
     }
 
     public void startLoop() {
-        // message to show in the action bar
-        TextComponent message;
-        if (this.duration == 0) {
-            message = new TextComponent(
-                    ChatColor.GOLD + "Time left: " + ChatColor.AQUA + "∞" + ChatColor.GOLD + "s" + ChatColor.WHITE
-                            + " ✦ "
-                            + ChatColor.AQUA + getHiders().length + ChatColor.GOLD + " hiders remaining."
-            );
-        } else {
-            message = new TextComponent(
-                    ChatColor.GOLD + "Time left: " + ChatColor.AQUA + getCountdown() + ChatColor.GOLD + "s" + ChatColor.WHITE
-                            + " ✦ "
-                            + ChatColor.AQUA + getHiders().length + ChatColor.GOLD + " hiders remaining."
-            );
-        }
-
         //run every second as long as the arena is active
         new BukkitRunnable() {
             @Override
             public void run() {
                 if (isActive()) {
+                    if (getCountdown() <= 0) {
+                        // show the countdown to the players in the action bar as well as the amount of players remaining
+                        if (getHiders() != null) {
+                            for (Player hider : getHiders()) {
+                                hider.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(
+                                        ChatColor.GOLD + "Time left: " + ChatColor.AQUA + "∞" + ChatColor.GOLD + "s" + ChatColor.WHITE
+                                                + " ✦ "
+                                                + ChatColor.AQUA + getHiders().length + ChatColor.GOLD + " hiders remaining."
+                                ));
+                            }
+                        }
+
+                        if (getSeekers() != null) {
+                            for (Player seeker : getSeekers()) {
+                                seeker.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(
+                                        ChatColor.GOLD + "Time left: " + ChatColor.AQUA + "∞" + ChatColor.GOLD + "s" + ChatColor.WHITE
+                                                + " ✦ "
+                                                + ChatColor.AQUA + getHiders().length + ChatColor.GOLD + " hiders remaining."
+                                ));
+                            }
+                        }
+                    }
                     tickCountdown();
 
                     // show the countdown to the players in the action bar as well as the amount of players remaining
                     if (getHiders() != null) {
                         for (Player hider : getHiders()) {
-                            hider.spigot().sendMessage(ChatMessageType.ACTION_BAR, message);
+                            hider.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(
+                                    ChatColor.GOLD + "Time left: " + ChatColor.AQUA + getCountdown() + ChatColor.GOLD + "s" + ChatColor.WHITE
+                                            + " ✦ "
+                                            + ChatColor.AQUA + getHiders().length + ChatColor.GOLD + " hiders remaining."
+                            ));
                         }
                     }
 
                     if (getSeekers() != null) {
                         for (Player seeker : getSeekers()) {
-                            seeker.spigot().sendMessage(ChatMessageType.ACTION_BAR, message);
+                            seeker.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(
+                                    ChatColor.GOLD + "Time left: " + ChatColor.AQUA + getCountdown() + ChatColor.GOLD + "s" + ChatColor.WHITE
+                                            + " ✦ "
+                                            + ChatColor.AQUA + getHiders().length + ChatColor.GOLD + " hiders remaining."
+                            ));
                         }
                     }
 
