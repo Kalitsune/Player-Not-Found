@@ -114,7 +114,7 @@ public class ClubsInteraction implements Listener {
                     arena.addDeadPlayer(target);
 
                     // reset the seeker club number
-                    item.setAmount(3);
+                    item.setAmount(arena.getSeekerClubCount());
                 } else {
                     player.sendMessage(ChatColor.RED + "You can only use this club on hiders and NPCs!");
                 }

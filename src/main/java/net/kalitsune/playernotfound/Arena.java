@@ -23,6 +23,8 @@ import static net.kalitsune.playernotfound.Stores.plugin;
 
 public class Arena {
     private final Integer default_duration; // duration in the configs
+    private final Integer seekerClubCount;
+    private final Integer hiderClubCount;
     private Integer duration; // duration override when launching the game
     private Integer countdown; // countdown used during the game
     private String name;
@@ -38,13 +40,15 @@ public class Arena {
     private Player[] seekers;
     private Player[] deadPlayers;
 
-    public Arena(String name, Location from, Location to, Location waypoint, Location[] spawns, Integer duration) {
+    public Arena(String name, Location from, Location to, Location waypoint, Location[] spawns, Integer duration, Integer seekerClubCount, Integer hiderClubCount) {
         this.name = name;
         this.from = from;
         this.to = to;
         this.waypoint = waypoint;
         this.spawns = spawns;
         this.default_duration = duration;
+        this.seekerClubCount = seekerClubCount;
+        this.hiderClubCount = hiderClubCount;
     }
 
     public String getName() {
@@ -188,6 +192,10 @@ public class Arena {
         this.waypoint = waypoint;
     }
 
+    public Integer getHiderClubCount() {
+        return this.hiderClubCount;
+    }
+
     public Player[] getHiders() {
         return this.hiders;
     }
@@ -221,7 +229,9 @@ public class Arena {
         }
 
         // give the player the hider club
-        player.getInventory().addItem(Items.hiderClub);
+        ItemStack hiderClub = Items.hiderClub.clone();
+        hiderClub.setAmount(hiderClubCount);
+        player.getInventory().addItem(hiderClub);
 
         // remove any potion effect that the player could have
         player.getActivePotionEffects().forEach(potionEffect -> player.removePotionEffect(potionEffect.getType()));
@@ -266,6 +276,10 @@ public class Arena {
         }
     }
 
+    public Integer getSeekerClubCount() {
+        return this.seekerClubCount;
+    }
+
     public Player[] getSeekers() {
         return this.seekers;
     }
@@ -301,7 +315,7 @@ public class Arena {
 
         // give the player the seeker club (each seeker gets 3 seekerClub)
         ItemStack seekerClub = Items.seekerClub.clone();
-        seekerClub.setAmount(3);
+        seekerClub.setAmount(seekerClubCount);
         player.getInventory().addItem(seekerClub);
 
         // add a speed potion effect to the player

@@ -11,6 +11,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -50,18 +51,22 @@ public final class PlayerNotFound extends JavaPlugin {
                     Integer duration = arenaSection.getInt("duration", 300);
 
                     // convert cfgSpawns to Location
-                    Location[] spawns = new Location[cfgSpawns.size()];
-                    int i = 0;
+                    List<Location> spawns = new ArrayList<>();
                     for (Map<?, ?> spawn : cfgSpawns) {
                         double x = Double.parseDouble(spawn.get("x").toString());
                         double y = Double.parseDouble(spawn.get("y").toString());
                         double z = Double.parseDouble(spawn.get("z").toString());
                         float yaw = spawn.containsKey("yaw") ? (float) spawn.get("yaw") : 0;
                         float pitch = spawn.containsKey("pitch") ? (float) spawn.get("pitch") : 0;
+                        int count = spawn.containsKey("count") ? (int) spawn.get("count") : 1;
 
-                        spawns[i] = new Location(getServer().getWorld(cfgWorld), x, y, z, yaw, pitch);
-                        i++;
+                        for (int j = 0; j < count; j++) {
+                            spawns.add(new Location(getServer().getWorld(cfgWorld), x, y, z, yaw, pitch));
+                        }
                     }
+                    // convert the List to location[]
+                    Location[] spawnsArray = new Location[spawns.size()];
+                    spawns.toArray(spawnsArray);
 
                     // convert cfgFrom, cfgTo and cfgWaypoint to Location
                     assert cfgFrom != null;
@@ -84,8 +89,12 @@ public final class PlayerNotFound extends JavaPlugin {
                     float waypointPitch = (float) cfgWaypoint.getDouble("pitch", 0);
                     Location waypoint = new Location(getServer().getWorld(cfgWorld), waypointX, waypointY, waypointZ, waypointYaw, waypointPitch);
 
+                    // get the amount of clubs
+                    int seekerClubAmount = arenaSection.getInt("seekerClubAmount", 3);
+                    int hiderClubAmount = arenaSection.getInt("hiderClubAmount", 1);
+
                     // create the arena
-                    Arena arena = new Arena(arenaName, from, to, waypoint, spawns, duration);
+                    Arena arena = new Arena(arenaName, from, to, waypoint, spawnsArray, duration, seekerClubAmount, hiderClubAmount);
 
                     // add the arena to the store
                     Stores.arenas.add(arena);
@@ -126,11 +135,12 @@ public final class PlayerNotFound extends JavaPlugin {
                 "\n     seeker_club:" +
                 "\n         name: §6Seeker Club # optional, defaults to §6Seeker Club" +
                 "\n         name: BLAZE_ROD # optional, defaults to BLAZE_ROD" +
-
                 "\n   arenas:" +
                 "\n       - arena1: # The id of the arena you want to define" +
                 "\n         world: world # not required, default: world" +
                 "\n         duration: 300 # not required, default: 300 (5min), the duration of a game in seconds. 0 to disable." +
+                "\n         seekerClubAmount: 3 # not required, default: 3, the amount of seeker club the seeker has" +
+                "\n         hiderClubAmount: 1 # not required, default: 1, the amount of hider club the hider has" +
                 "\n         area:" +
                 "\n           from: # Pos 1" +
                 "\n              x: 0" +
@@ -151,7 +161,8 @@ public final class PlayerNotFound extends JavaPlugin {
                 "\n             y: 0" +
                 "\n             z: 0" +
                 "\n             yaw: 0 # optional" +
-                "\n             pitch: 0 # optional"
+                "\n             pitch: 0 # optional" +
+                "\n             count: 1 # optional"
         );
 
         config.addDefault("items.hider_club.name", "§8Hider Club");
