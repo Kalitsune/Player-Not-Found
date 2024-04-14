@@ -8,6 +8,8 @@ on:
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write # github.com/kalitsune/open-discord-translator/releases
     steps:
       - uses: actions/checkout@v4
       - name: Get Tag version
