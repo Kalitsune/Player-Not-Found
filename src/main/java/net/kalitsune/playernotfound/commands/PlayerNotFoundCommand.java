@@ -66,8 +66,12 @@ public class PlayerNotFoundCommand {
         sender.sendMessage(message.toString());
 
         // enable the arena
+        arena.resetCountdown();
         arena.spawnNPCs(players);
         arena.setActive(true);
+
+        // main game loop
+        arena.startLoop();
     }
 
     public static void reset(Player sender, @AStringArgument String arenaName) {

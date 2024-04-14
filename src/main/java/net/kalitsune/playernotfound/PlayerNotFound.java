@@ -42,11 +42,12 @@ public final class PlayerNotFound extends JavaPlugin {
                 if (arenaSection != null) {
                     // get the values
                     List<Map<?, ?>> cfgSpawns = arenaSection.getMapList("spawns");
-                    
+
                     ConfigurationSection cfgFrom = arenaSection.getConfigurationSection("area.from");
                     ConfigurationSection cfgTo = arenaSection.getConfigurationSection("area.to");
                     ConfigurationSection cfgWaypoint = arenaSection.getConfigurationSection("area.waypoint");
                     String cfgWorld = arenaSection.getString("world", "world");
+                    Integer duration = arenaSection.getInt("duration", 300);
 
                     // convert cfgSpawns to Location
                     Location[] spawns = new Location[cfgSpawns.size()];
@@ -84,7 +85,7 @@ public final class PlayerNotFound extends JavaPlugin {
                     Location waypoint = new Location(getServer().getWorld(cfgWorld), waypointX, waypointY, waypointZ, waypointYaw, waypointPitch);
 
                     // create the arena
-                    Arena arena = new Arena(arenaName, from, to, waypoint, spawns);
+                    Arena arena = new Arena(arenaName, from, to, waypoint, spawns, duration);
 
                     // add the arena to the store
                     Stores.arenas.add(arena);
@@ -129,6 +130,7 @@ public final class PlayerNotFound extends JavaPlugin {
                 "\n   arenas:" +
                 "\n       - arena1: # The id of the arena you want to define" +
                 "\n         world: world # not required, default: world" +
+                "\n         duration: 300 # not required, default: 300 (5min), the duration of a game in seconds. 0 to disable." +
                 "\n         area:" +
                 "\n           from: # Pos 1" +
                 "\n              x: 0" +

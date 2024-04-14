@@ -3,6 +3,8 @@ package net.kalitsune.playernotfound;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.trait.waypoint.Waypoints;
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -10,20 +12,25 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Objects;
 
+import static net.kalitsune.playernotfound.Stores.plugin;
+
 
 public class Arena {
+    private final Integer default_duration; // duration in the configs
+    private Integer duration; // duration override when launching the game
+    private Integer countdown; // countdown used during the game
     private String name;
     private boolean active = false;
     private Location from;
     private Location to;
     private Location waypoint;
     private Location[] spawns;
-
     private NPC[] npcs = new NPC[0];
 
     private Player[] hiders;
@@ -31,12 +38,13 @@ public class Arena {
     private Player[] seekers;
     private Player[] deadPlayers;
 
-    public Arena(String name, Location from, Location to, Location waypoint, Location[] spawns) {
+    public Arena(String name, Location from, Location to, Location waypoint, Location[] spawns, Integer duration) {
         this.name = name;
         this.from = from;
         this.to = to;
         this.waypoint = waypoint;
         this.spawns = spawns;
+        this.default_duration = duration;
     }
 
     public String getName() {
@@ -53,6 +61,83 @@ public class Arena {
 
     public void setActive(boolean active) {
         this.active = active;
+    }
+
+    public Integer getCountdown() {
+        return this.countdown;
+    }
+
+    public void resetCountdown() {
+        this.duration = this.default_duration;
+        this.countdown = this.duration;
+    }
+
+    public void resetCountdown(Integer durationOverride) {
+        this.duration = durationOverride;
+        this.countdown = this.duration;
+    }
+
+    public void tickCountdown() {
+        // check if the duration is infinite
+        if (this.duration == 0) {
+            return;
+        }
+
+        this.countdown--;
+
+        // check if the countdown is over
+        if (this.countdown <= 0) {
+            // kill all seekers
+            if (this.seekers != null) {
+                for (Player seeker : this.seekers) {
+                    addDeadPlayer(seeker);
+                }
+            }
+        }
+    }
+
+    public void startLoop() {
+        // message to show in the action bar
+        TextComponent message;
+        if (this.duration == 0) {
+            message = new TextComponent(
+                    ChatColor.GOLD + "Time left: " + ChatColor.AQUA + "∞" + ChatColor.GOLD + "s" + ChatColor.WHITE
+                            + " ✦ "
+                            + ChatColor.AQUA + getHiders().length + ChatColor.GOLD + " hiders remaining."
+            );
+        } else {
+            message = new TextComponent(
+                    ChatColor.GOLD + "Time left: " + ChatColor.AQUA + getCountdown() + ChatColor.GOLD + "s" + ChatColor.WHITE
+                            + " ✦ "
+                            + ChatColor.AQUA + getHiders().length + ChatColor.GOLD + " hiders remaining."
+            );
+        }
+
+        //run every second as long as the arena is active
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                if (isActive()) {
+                    tickCountdown();
+
+                    // show the countdown to the players in the action bar as well as the amount of players remaining
+                    if (getHiders() != null) {
+                        for (Player hider : getHiders()) {
+                            hider.spigot().sendMessage(ChatMessageType.ACTION_BAR, message);
+                        }
+                    }
+
+                    if (getSeekers() != null) {
+                        for (Player seeker : getSeekers()) {
+                            seeker.spigot().sendMessage(ChatMessageType.ACTION_BAR, message);
+                        }
+                    }
+
+                } else {
+                    cancel();
+                }
+            }
+        }.runTaskTimer(plugin, 0L, 20L);
     }
 
     public Location[] getLocations() {
