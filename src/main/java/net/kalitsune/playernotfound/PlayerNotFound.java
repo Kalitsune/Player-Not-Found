@@ -14,7 +14,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.logging.Level;
 
 public final class PlayerNotFound extends JavaPlugin {
@@ -44,38 +43,43 @@ public final class PlayerNotFound extends JavaPlugin {
                     // get the values
                     List<Map<?, ?>> cfgSpawns = arenaSection.getMapList("spawns");
 
-                    Map<?, ?> cfgFrom = Objects.requireNonNull(arenaSection.getConfigurationSection("area.from")).getValues(false);
-                    Map<?, ?> cfgTo = Objects.requireNonNull(arenaSection.getConfigurationSection("area.to")).getValues(false);
-                    Map<?, ?> cfgWaypoint = Objects.requireNonNull(arenaSection.getConfigurationSection("area.waypoint")).getValues(false);
+                    ConfigurationSection cfgFrom = arenaSection.getConfigurationSection("area.from");
+                    ConfigurationSection cfgTo = arenaSection.getConfigurationSection("area.to");
+                    ConfigurationSection cfgWaypoint = arenaSection.getConfigurationSection("area.waypoint");
                     String cfgWorld = arenaSection.getString("world", "world");
 
                     // convert cfgSpawns to Location
                     Location[] spawns = new Location[cfgSpawns.size()];
                     for (Map<?, ?> spawn : cfgSpawns) {
-                        int x = (int) spawn.get("x");
-                        int y = (int) spawn.get("y");
-                        int z = (int) spawn.get("z");
-                        int yaw = spawn.containsKey("yaw") ? (int) spawn.get("yaw") : 0;
-                        int pitch = spawn.containsKey("pitch") ? (int) spawn.get("pitch") : 0;
+                        double x = Double.parseDouble(spawn.get("x").toString());
+                        double y = Double.parseDouble(spawn.get("y").toString());
+                        double z = Double.parseDouble(spawn.get("z").toString());
+                        float yaw = spawn.containsKey("yaw") ? (float) spawn.get("yaw") : 0;
+                        float pitch = spawn.containsKey("pitch") ? (float) spawn.get("pitch") : 0;
 
-                        spawns[cfgSpawns.indexOf(spawn)] = new Location(getServer().getWorld(cfgWorld), x, y, z, (float) yaw, (float) pitch);
+                        spawns[cfgSpawns.indexOf(spawn)] = new Location(getServer().getWorld(cfgWorld), x, y, z, yaw, pitch);
                     }
 
                     // convert cfgFrom, cfgTo and cfgWaypoint to Location
-                    int fromX = (int) cfgFrom.get("x");
-                    int fromY = (int) cfgFrom.get("y");
-                    int fromZ = (int) cfgFrom.get("z");
+                    assert cfgFrom != null;
+                    double fromX = cfgFrom.getDouble("x");
+                    double fromY = cfgFrom.getDouble("y");
+                    double fromZ = cfgFrom.getDouble("z");
                     Location from = new Location(getServer().getWorld(cfgWorld), fromX, fromY, fromZ);
 
-                    int toX = (int) cfgTo.get("x");
-                    int toY = (int) cfgTo.get("y");
-                    int toZ = (int) cfgTo.get("z");
+                    assert cfgTo != null;
+                    double toX = cfgTo.getDouble("x");
+                    double toY = cfgTo.getDouble("y");
+                    double toZ = cfgTo.getDouble("z");
                     Location to = new Location(getServer().getWorld(cfgWorld), toX, toY, toZ);
 
-                    int waypointX = (int) cfgWaypoint.get("x");
-                    int waypointY = (int) cfgWaypoint.get("y");
-                    int waypointZ = (int) cfgWaypoint.get("z");
-                    Location waypoint = new Location(getServer().getWorld(cfgWorld), waypointX, waypointY, waypointZ);
+                    assert cfgWaypoint != null;
+                    double waypointX = cfgWaypoint.getDouble("x");
+                    double waypointY = cfgWaypoint.getDouble("y");
+                    double waypointZ = cfgWaypoint.getDouble("z");
+                    float waypointYaw = (float) cfgWaypoint.getDouble("yaw", 0);
+                    float waypointPitch = (float) cfgWaypoint.getDouble("pitch", 0);
+                    Location waypoint = new Location(getServer().getWorld(cfgWorld), waypointX, waypointY, waypointZ, waypointYaw, waypointPitch);
 
                     // create the arena
                     Arena arena = new Arena(arenaName, from, to, waypoint, spawns);
@@ -136,6 +140,8 @@ public final class PlayerNotFound extends JavaPlugin {
                 "\n              x: 0" +
                 "\n              y: 0" +
                 "\n              z: 0" +
+                "\n              yaw: 0 # optional" +
+                "\n              pitch: 0 # optional" +
                 "\n         spawns: # the spawn location of each npc, put as many as you'd like." +
                 "\n           - x: 0" +
                 "\n             y: 0" +
