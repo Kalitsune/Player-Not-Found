@@ -101,6 +101,9 @@ public final class PlayerNotFound extends JavaPlugin {
         this.getLogger().log(Level.INFO, "Plugin loaded!");
         this.getLogger().log(Level.INFO, "Arena count: " + Stores.arenas.getArenaCount());
 
+        // create the NPC registry
+        Stores.npcRegistry = net.citizensnpcs.api.CitizensAPI.createInMemoryNPCRegistry("PlayerNotFound");
+
         //register the commands
         CommandAPI.registerCommand(ClonePlayerCommand.class);
         CommandAPI.registerCommand(PlayerNotFoundCommand.class);
@@ -113,15 +116,20 @@ public final class PlayerNotFound extends JavaPlugin {
 
         // Create the scoreboard
         Stores.scoreboard = Objects.requireNonNull(getServer().getScoreboardManager()).getMainScoreboard();
-        if (Stores.scoreboard.getObjective("pnf_countdown") == null) {
-            Stores.scoreboard.registerNewObjective("pnf_countdown", "dummy", "Countdown");
+        if (Stores.scoreboard.getObjective("pnf_countdown") != null) {
+            // if it already exists, reset the scores
+            Objects.requireNonNull(Stores.scoreboard.getObjective("pnf_countdown")).unregister();
         }
+        Stores.scoreboard.registerNewObjective("pnf_countdown", "dummy", "Countdown");
+
         if (Stores.scoreboard.getObjective("pnf_wins") == null) {
             Stores.scoreboard.registerNewObjective("pnf_wins", "dummy", "Total victory");
         }
+
         if (Stores.scoreboard.getObjective("pnf_seeker_wins") == null) {
             Stores.scoreboard.registerNewObjective("pnf_seeker_wins", "dummy", "Seeker victory");
         }
+
         if (Stores.scoreboard.getObjective("pnf_hider_wins") == null) {
             Stores.scoreboard.registerNewObjective("pnf_hider_wins", "dummy", "Hider victory");
         }

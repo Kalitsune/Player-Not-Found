@@ -590,7 +590,7 @@ public class Arena {
                 }
 
                 // spawn the npc
-                NPC npc = CitizensAPI.getNPCRegistry().createNPC(EntityType.PLAYER, player.getName());
+                NPC npc = Stores.npcRegistry.createNPC(EntityType.PLAYER, player.getName());
                 npc.getOrAddTrait(Waypoints.class).setWaypointProvider("wander");
                 npc.spawn(loc);
 
