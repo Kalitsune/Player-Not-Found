@@ -11,10 +11,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Level;
 
 public final class PlayerNotFound extends JavaPlugin {
@@ -113,6 +110,21 @@ public final class PlayerNotFound extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new ClubsInteraction(), this);
         getServer().getPluginManager().registerEvents(new DetectPlayerEnteringArena(), this);
         getServer().getPluginManager().registerEvents(new PlayerLeave(), this);
+
+        // Create the scoreboard
+        Stores.scoreboard = Objects.requireNonNull(getServer().getScoreboardManager()).getMainScoreboard();
+        if (Stores.scoreboard.getObjective("pnf_countdown") == null) {
+            Stores.scoreboard.registerNewObjective("pnf_countdown", "dummy", "Countdown");
+        }
+        if (Stores.scoreboard.getObjective("pnf_wins") == null) {
+            Stores.scoreboard.registerNewObjective("pnf_wins", "dummy", "Total victory");
+        }
+        if (Stores.scoreboard.getObjective("pnf_seeker_wins") == null) {
+            Stores.scoreboard.registerNewObjective("pnf_seeker_wins", "dummy", "Seeker victory");
+        }
+        if (Stores.scoreboard.getObjective("pnf_hider_wins") == null) {
+            Stores.scoreboard.registerNewObjective("pnf_hider_wins", "dummy", "Hider victory");
+        }
     }
 
     @Override
@@ -136,7 +148,7 @@ public final class PlayerNotFound extends JavaPlugin {
                 "\n         name: §6Seeker Club # optional, defaults to §6Seeker Club" +
                 "\n         name: BLAZE_ROD # optional, defaults to BLAZE_ROD" +
                 "\n   arenas:" +
-                "\n       - arena1: # The id of the arena you want to define" +
+                "\n       - arena1: # The name of the arena you want to define" +
                 "\n         world: world # not required, default: world" +
                 "\n         duration: 300 # not required, default: 300 (5min), the duration of a game in seconds. 0 to disable." +
                 "\n         seekerClubAmount: 3 # not required, default: 3, the amount of seeker club the seeker has" +

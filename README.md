@@ -9,6 +9,26 @@ NPCs.
 
 - Support for multiple fully customizable Arenas
 - Compatible with server-side commands, enabling execution from datapacks and command blocks.
+- Provides scoreboards so that you can get information about the game with datapacks. (see [Scoreboards](#scoreboards).)
+- Very customizable, with a lot of options to tweak the game to your liking.
+
+## Scoreboards
+
+In an effort to make PlayerNotFound more compatible with datapacks, we have added a scoreboard system that allows you to
+get information about the game.
+
+The following objectives are available:
+| Objective | Description | target |
+| --- | --- | --- |
+| `pnf_countdown` | The time left in the arena. (if infinite, the value will always be 1.) | `arenas` |
+| `pnf_wins` | The number of wins the player has. | `players` |
+| `pnf_seeker_wins` | The number of time the player won as a seeker. | `players` |
+| `pnf_hider_wins` | The number of time the player won as a hider. | `players` |
+
+Targets:
+
+- `arenas`: The name of the arena.
+- `players`: The name of the player.
 
 ## Compatibility
 

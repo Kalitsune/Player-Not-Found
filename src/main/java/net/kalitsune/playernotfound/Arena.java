@@ -13,12 +13,14 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scoreboard.Score;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Objects;
 
 import static net.kalitsune.playernotfound.Stores.plugin;
+import static net.kalitsune.playernotfound.Stores.scoreboard;
 
 
 public class Arena {
@@ -67,10 +69,17 @@ public class Arena {
         this.active = active;
     }
 
+    public Integer getDefaultDuration() {
+        return this.default_duration;
+    }
+
+    public Integer getDuration() {
+        return this.duration;
+    }
+
     public Integer getCountdown() {
         return this.countdown;
     }
-
 
     public void resetCountdown(Integer durationOverride) {
         if (durationOverride == null) {
@@ -83,11 +92,16 @@ public class Arena {
 
     public void tickCountdown() {
         // check if the duration is infinite
-        if (this.duration == 0) {
+        if (getDuration() == 0) {
+            // update the scoreboard
+            Objects.requireNonNull(scoreboard.getObjective("pnf_countdown")).getScore(this.name).setScore(1);
             return;
         }
 
         this.countdown--;
+
+        // update the scoreboard
+        Objects.requireNonNull(scoreboard.getObjective("pnf_countdown")).getScore(this.name).setScore(this.countdown);
 
         // check if the countdown is over
         if (this.countdown <= 0) {
@@ -111,8 +125,7 @@ public class Arena {
                     tickCountdown();
 
                     // show the countdown to the players in the action bar as well as the amount of players remaining
-                    if (getCountdown() <= 0) {
-                        // show the countdown to the players in the action bar as well as the amount of players remaining
+                    if (getDuration() == 0) {
                         if (getHiders() != null) {
                             for (Player hider : getHiders()) {
                                 hider.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(
@@ -265,6 +278,13 @@ public class Arena {
                 if (this.seekers != null) {
                     for (Player seeker : this.seekers) {
                         seeker.sendTitle(ChatColor.GOLD + "VICTORY!", "Every hiders were found.", 10, 70, 20);
+
+                        // update the scoreboards
+                        Score wins = Objects.requireNonNull(scoreboard.getObjective("pnf_wins")).getScore(seeker.getName());
+                        wins.setScore(wins.getScore() + 1);
+
+                        Score seeker_wins = Objects.requireNonNull(scoreboard.getObjective("pnf_seeker_wins")).getScore(seeker.getName());
+                        seeker_wins.setScore(seeker_wins.getScore() + 1);
                     }
                 }
                 if (this.deadPlayers != null) {
@@ -349,6 +369,13 @@ public class Arena {
                 if (this.hiders != null) {
                     for (Player hider : this.hiders) {
                         hider.sendTitle(ChatColor.GOLD + "VICTORY!", ChatColor.GRAY + "Every seekers died.", 10, 70, 20);
+
+                        // update the scoreboards
+                        Score wins = Objects.requireNonNull(scoreboard.getObjective("pnf_wins")).getScore(hider.getName());
+                        wins.setScore(wins.getScore() + 1);
+
+                        Score hider_wins = Objects.requireNonNull(scoreboard.getObjective("pnf_hider_wins")).getScore(hider.getName());
+                        hider_wins.setScore(hider_wins.getScore() + 1);
                     }
                 }
                 if (this.deadPlayers != null) {
@@ -506,6 +533,9 @@ public class Arena {
 
         // remove all npcs
         removeNPCs();
+
+        // reset the scoreboard
+        Objects.requireNonNull(scoreboard.getObjective("pnf_countdown")).getScore(this.name).setScore(0);
 
         // reset the teams
         hiders = null;
