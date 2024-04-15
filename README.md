@@ -1,3 +1,5 @@
+![Banner](./Banner.png)
+
 # Player Not Found
 
 PlayerNotFound is a minigame plugin for Minecraft servers where players have to find the true player among a group of
