@@ -111,6 +111,24 @@ public class Arena {
                     addDeadPlayer(seeker);
                 }
             } else {
+                // inform people and reset the game
+                if (this.hiders != null) {
+                    for (Player hider : this.hiders) {
+                        hider.sendTitle(ChatColor.GOLD + "VICTORY!", ChatColor.GRAY + "Time's up!", 10, 70, 20);
+
+                        // update the scoreboards
+                        Score wins = Objects.requireNonNull(scoreboard.getObjective("pnf_wins")).getScore(hider.getName());
+                        wins.setScore(wins.getScore() + 1);
+
+                        Score hider_wins = Objects.requireNonNull(scoreboard.getObjective("pnf_hider_wins")).getScore(hider.getName());
+                        hider_wins.setScore(hider_wins.getScore() + 1);
+                    }
+                }
+                if (this.deadPlayers != null) {
+                    for (Player deadPlayer : this.deadPlayers) {
+                        deadPlayer.sendTitle(ChatColor.RED + "DEFEAT!", ChatColor.GRAY + "You didn't catch the hiders in time.", 10, 70, 20);
+                    }
+                }
                 reset();
             }
         }
