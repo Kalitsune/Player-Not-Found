@@ -475,6 +475,11 @@ public class Arena {
         int i = 0;
         for (Player player : players) {
             if (isInside(player.getLocation())) {
+                // check if the player is in spectator mode
+                if (player.getGameMode() == org.bukkit.GameMode.SPECTATOR) {
+                    continue;
+                }
+
                 // ensure that the player is not playing in another arena
                 if (Stores.arenas.getArena(player) != null) {
                     // check if the player is dead

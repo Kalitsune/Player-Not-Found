@@ -15,6 +15,11 @@ public class DetectPlayerEnteringArena implements Listener {
         // check if the player is entering the arena
         Player player = event.getPlayer();
 
+        // check if the player is in spectator mode
+        if (player.getGameMode() == org.bukkit.GameMode.SPECTATOR) {
+            return;
+        }
+
         Arena arena = arenas.getArena(player.getLocation());
         if (arena != null) {
             // if the player is neither dead nor already in the arena, make him join
