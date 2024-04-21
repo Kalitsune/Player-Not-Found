@@ -8,6 +8,7 @@ import dev.jorel.commandapi.annotations.arguments.AIntegerArgument;
 import dev.jorel.commandapi.annotations.arguments.AStringArgument;
 import net.kalitsune.playernotfound.Arena;
 import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import static net.kalitsune.playernotfound.Stores.arenas;
@@ -25,16 +26,17 @@ public class PlayerNotFoundCommand {
     }
 
     @Subcommand("play")
-    public static void play(Player sender, @AStringArgument String arenaName) {
+    public static void play(CommandSender sender, @AStringArgument String arenaName) {
         play_game(sender, arenaName, null);
     }
 
     @Subcommand("play")
-    public static void play(Player sender, @AStringArgument String arenaName, @AIntegerArgument Integer duration) {
+    public static void play(CommandSender sender, @AStringArgument String arenaName, @AIntegerArgument Integer duration) {
         play_game(sender, arenaName, duration);
     }
 
-    public static void play_game(Player sender, String arenaName, Integer duration) {
+
+    public static void play_game(CommandSender sender, String arenaName, Integer duration) {
         Arena arena = arenas.getArena(arenaName);
         if (arena == null) {
             sender.sendMessage(ChatColor.RED + "Arena " + arenaName + " not found");

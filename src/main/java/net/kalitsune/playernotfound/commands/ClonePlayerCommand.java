@@ -10,6 +10,7 @@ import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.trait.waypoint.Waypoints;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
@@ -34,7 +35,7 @@ public class ClonePlayerCommand {
     }
 
     @Default
-    public static void cloneplayer(Player sender, @APlayerArgument Player target_player, @ALocationArgument Location location) {
+    public static void cloneplayer(CommandSender sender, @APlayerArgument Player target_player, @ALocationArgument Location location) {
         sender.sendMessage(String.format(ChatColor.GREEN + "Successfully cloned %s!", target_player.getName()));
         NPC npc = CitizensAPI.getNPCRegistry().createNPC(EntityType.PLAYER, target_player.getName());
         npc.getOrAddTrait(Waypoints.class).setWaypointProvider("wander");
@@ -43,7 +44,7 @@ public class ClonePlayerCommand {
     }
 
     @Default
-    public static void cloneplayer(Player sender, @APlayerArgument Player target_player, @ALocationArgument Location location, @AFloatArgument Float yaw, @AFloatArgument Float pitch) {
+    public static void cloneplayer(CommandSender sender, @APlayerArgument Player target_player, @ALocationArgument Location location, @AFloatArgument Float yaw, @AFloatArgument Float pitch) {
         sender.sendMessage(String.format(ChatColor.GREEN + "Successfully cloned %s!", target_player.getName()));
         NPC npc = CitizensAPI.getNPCRegistry().createNPC(EntityType.PLAYER, target_player.getName());
         npc.getOrAddTrait(Waypoints.class).setWaypointProvider("wander");
