@@ -21,6 +21,24 @@ public final class PlayerNotFound extends JavaPlugin {
         // Store the plugin instance
         Stores.plugin = this;
 
+        // Create the scoreboards
+        Stores.scoreboard = Objects.requireNonNull(getServer().getScoreboardManager()).getMainScoreboard();
+        if (Stores.scoreboard.getObjective("pnf_countdown") == null) {
+            Stores.scoreboard.registerNewObjective("pnf_countdown", "dummy", "Countdown");
+        }
+
+        if (Stores.scoreboard.getObjective("pnf_wins") == null) {
+            Stores.scoreboard.registerNewObjective("pnf_wins", "dummy", "Total victory");
+        }
+
+        if (Stores.scoreboard.getObjective("pnf_seeker_wins") == null) {
+            Stores.scoreboard.registerNewObjective("pnf_seeker_wins", "dummy", "Seeker victory");
+        }
+
+        if (Stores.scoreboard.getObjective("pnf_hider_wins") == null) {
+            Stores.scoreboard.registerNewObjective("pnf_hider_wins", "dummy", "Hider victory");
+        }
+
         // Plugin startup logic
         // get the config
         FileConfiguration config = getDefaultConfig();
@@ -113,26 +131,6 @@ public final class PlayerNotFound extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new ClubsInteraction(), this);
         getServer().getPluginManager().registerEvents(new DetectPlayerEnteringArena(), this);
         getServer().getPluginManager().registerEvents(new PlayerLeave(), this);
-
-        // Create the scoreboard
-        Stores.scoreboard = Objects.requireNonNull(getServer().getScoreboardManager()).getMainScoreboard();
-        if (Stores.scoreboard.getObjective("pnf_countdown") != null) {
-            // if it already exists, reset the scores
-            Objects.requireNonNull(Stores.scoreboard.getObjective("pnf_countdown")).unregister();
-        }
-        Stores.scoreboard.registerNewObjective("pnf_countdown", "dummy", "Countdown");
-
-        if (Stores.scoreboard.getObjective("pnf_wins") == null) {
-            Stores.scoreboard.registerNewObjective("pnf_wins", "dummy", "Total victory");
-        }
-
-        if (Stores.scoreboard.getObjective("pnf_seeker_wins") == null) {
-            Stores.scoreboard.registerNewObjective("pnf_seeker_wins", "dummy", "Seeker victory");
-        }
-
-        if (Stores.scoreboard.getObjective("pnf_hider_wins") == null) {
-            Stores.scoreboard.registerNewObjective("pnf_hider_wins", "dummy", "Hider victory");
-        }
     }
 
     @Override

@@ -51,6 +51,9 @@ public class Arena {
         this.default_duration = duration;
         this.seekerClubCount = seekerClubCount;
         this.hiderClubCount = hiderClubCount;
+
+        // set the scoreboard duration to 0
+        Objects.requireNonNull(scoreboard.getObjective("pnf_countdown")).getScore(this.name).setScore(0);
     }
 
     public String getName() {
