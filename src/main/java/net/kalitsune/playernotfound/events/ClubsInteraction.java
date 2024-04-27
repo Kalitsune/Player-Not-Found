@@ -69,6 +69,12 @@ public class ClubsInteraction implements Listener {
 
                 // check if the target is a seeker
                 if (arena != null && arena.isSeeker(target)) {
+
+                    // do not affect the player as long as he is stunned
+                    if (target.hasPotionEffect(PotionEffectType.BLINDNESS)) {
+                        return;
+                    }
+
                     // summon particles and sounds here
                     target.getWorld().spawnParticle(Particle.CAMPFIRE_SIGNAL_SMOKE, target.getLocation().add(0, 1.5, 0), 10);
                     target.getWorld().playSound(target.getLocation(), "block.conduit.activate", 1, 1);
