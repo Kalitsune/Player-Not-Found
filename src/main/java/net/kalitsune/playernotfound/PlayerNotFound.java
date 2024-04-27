@@ -5,6 +5,7 @@ import net.kalitsune.playernotfound.commands.ClonePlayerCommand;
 import net.kalitsune.playernotfound.commands.PlayerNotFoundCommand;
 import net.kalitsune.playernotfound.events.ClubsInteraction;
 import net.kalitsune.playernotfound.events.DetectPlayerEnteringArena;
+import net.kalitsune.playernotfound.events.DisablePlayerPunching;
 import net.kalitsune.playernotfound.events.PlayerLeave;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
@@ -129,6 +130,7 @@ public final class PlayerNotFound extends JavaPlugin {
 
         // register the events
         getServer().getPluginManager().registerEvents(new ClubsInteraction(), this);
+        getServer().getPluginManager().registerEvents(new DisablePlayerPunching(), this);
         getServer().getPluginManager().registerEvents(new DetectPlayerEnteringArena(), this);
         getServer().getPluginManager().registerEvents(new PlayerLeave(), this);
     }
